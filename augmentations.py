@@ -1,3 +1,4 @@
+#https://albumentations.readthedocs.io/en/latest/
 from urllib.request import urlopen
 import numpy as np
 import cv2
@@ -14,27 +15,28 @@ class augmentation_class():
     
     def __init__(self, mode): #4 MODES, IAAPerspective, ShiftScaleRotate, MediumAugmentation y StrongAugmentation
         try:
-            self.preprocess_fn = {
+            self.augment_img = {
                 'IAAPerspective': self.IAAP,
                 'ShiftScaleRotate': self.SSR,
-                'MediumAugmentation': self.MediumAug,
-                'StrongAugmentation': self.MediumAug,
+                'MediumAug': self.MediumAug,
+                'StrongAug': self.StrongAug,
+                'None':self.NoneAug,
             }[mode]
         except:
-            raise ValueError('Mode must be \'IAAPerspective\', \'ShiftScaleRotate\', \'MediumAugmentation\' or \'StrongAugmentation\'')     
+            raise ValueError('Mode must be \'IAAPerspective\', \'ShiftScaleRotate\', \'MediumAug\', \'StrongAug\' or \'None\'')     
         self.mode = mode
      
-    def IAAP(self, scale=0.2, p=1):
+    def IAAP(self, image, scale=0.2, p=1):
         aug = IAAPerspective(scale=scale, p=p)
-        image = aug(image=image)['image']
-        return image
+        output = aug(image=image)['image']
+        return output
     
-    def SSR (self,p=1):
+    def SSR (self, image, p=1):
         aug = ShiftScaleRotate(p=1)
-        image = aug(image=image)['image']
-        return image
+        output = aug(image=image)['image']
+        return output
     
-    def MediumAug(self, p=.5):
+    def MediumAug(self, image, p=1):
         aug = Compose([
             CLAHE(),
             RandomRotate90(),
@@ -45,10 +47,10 @@ class augmentation_class():
             GridDistortion(),
             HueSaturationValue()
         ], p=p)
-        image = aug(image=image)['image']
-        return image
+        output = aug(image=image)['image']
+        return output
     
-    def StrongAug(self, p=.5):
+    def StrongAug(self, image, p=1):
         aug = Compose([
             RandomRotate90(),
             Flip(),
@@ -77,8 +79,13 @@ class augmentation_class():
             ], p=0.3),
             HueSaturationValue(p=0.3),
         ], p=p)
-        image = aug(image=image)['image']
+        output = aug(image=image)['image']
+        return output
+    
+    def NoneAug(self, image):
         return image
+    
+    
         
         
 
