@@ -20,10 +20,9 @@ class augmentation_class():
                 'ShiftScaleRotate': self.SSR,
                 'MediumAug': self.MediumAug,
                 'StrongAug': self.StrongAug,
-                'None':self.NoneAug,
             }[mode]
         except:
-            raise ValueError('Mode must be \'IAAPerspective\', \'ShiftScaleRotate\', \'MediumAug\', \'StrongAug\' or \'None\'')     
+            raise ValueError('Mode must be \'IAAPerspective\', \'ShiftScaleRotate\', \'MediumAug\', or \'StrongAug\'')     
         self.mode = mode
      
     def IAAP(self, image, scale=0.2, p=1):
@@ -82,8 +81,6 @@ class augmentation_class():
         output = aug(image=image)['image']
         return output
     
-    def NoneAug(self, image):
-        return image
     
     
         
