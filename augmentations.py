@@ -1,8 +1,5 @@
-#https://albumentations.readthedocs.io/en/latest/
-from urllib.request import urlopen
-import numpy as np
-import cv2
-from matplotlib import pyplot as plt
+#pip install albumentations
+#Webpage: https://albumentations.readthedocs.io/en/latest/
 
 from albumentations import (
     HorizontalFlip, IAAPerspective, ShiftScaleRotate, CLAHE, RandomRotate90,
@@ -11,7 +8,7 @@ from albumentations import (
     IAASharpen, IAAEmboss, RandomContrast, RandomBrightness, Flip, OneOf, Compose
 )
 
-class augmentation_class():
+class augmentation_clss():
     
     def __init__(self, mode): #4 MODES, IAAPerspective, ShiftScaleRotate, MediumAugmentation y StrongAugmentation
         try:
