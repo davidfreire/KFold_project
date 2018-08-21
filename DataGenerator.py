@@ -77,7 +77,7 @@ class DataGenerator_clss(keras.utils.Sequence):
                 img *= self.rescale
             
             if self.augmentation:
-                aug=augmentation_class(self.augmentation)
+                aug=augmentation_clss(self.augmentation)
                 augmented_img=aug.augment_img(img)
                 while(np.array_equal(augmented_img,np.zeros(augmented_img.shape)) == True):  #Avoid black images
                     augmented_img=aug.augment_img(img)
