@@ -1,13 +1,11 @@
 import numpy as np
 import keras
-import os
 from PIL import Image as pil_image
 from augmentations import augmentation_clss #pip install albumentations
 import warnings
 warnings.filterwarnings(action='ignore', category=DeprecationWarning)
 
 
-#Create data generator https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly.html
 if pil_image is not None:
     _PIL_INTERPOLATION_METHODS = {
         'nearest': pil_image.NEAREST,
@@ -25,7 +23,7 @@ if pil_image is not None:
         
         
 
-class DataGenerator_clss(keras.utils.Sequence):
+class ImgListDataGen(keras.utils.Sequence):
     
     # Initialization
     def __init__(self, img_files, labels, batch_size=32, target_size=None, 
@@ -91,7 +89,7 @@ class DataGenerator_clss(keras.utils.Sequence):
 
         return X, keras.utils.to_categorical(y, num_classes=self.n_classes)
     
-    
+    #load_img code extracted from keras_preprocessing/image.py
     def load_img(self, path, grayscale=False, color_mode='rgb', target_size=None, interpolation='nearest'):
         """Loads an image into PIL format.
         # Arguments
