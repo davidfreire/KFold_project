@@ -71,8 +71,6 @@ class ImgListDataGen(keras.utils.Sequence):
             # Store sample
             img = np.array(self.load_img(img_file, target_size=self.target_size))#skimage.io.imread(img_file)
             
-            if self.rescale:
-                img *= self.rescale
             
             if self.augmentation:
                 aug=augmentation_clss(self.augmentation)
@@ -80,6 +78,10 @@ class ImgListDataGen(keras.utils.Sequence):
                 while(np.array_equal(augmented_img,np.zeros(augmented_img.shape)) == True):  #Avoid black images
                     augmented_img=aug.augment_img(img)
                 img = augmented_img
+                
+                
+            if self.rescale:
+                img = img.astype(np.float32) * self.rescale
                 
             
             X.append(img)
