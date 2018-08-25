@@ -89,7 +89,7 @@ class ImgListDataGen(keras.utils.Sequence):
             # Store class
             y[i] = self.labels[i]
 
-        return X, keras.utils.to_categorical(y, num_classes=self.n_classes)
+        return np.array(X), keras.utils.to_categorical(y, num_classes=self.n_classes)
     
     #load_img code extracted from keras_preprocessing/image.py
     def load_img(self, path, grayscale=False, color_mode='rgb', target_size=None, interpolation='nearest'):
