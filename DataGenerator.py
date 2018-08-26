@@ -27,12 +27,16 @@ class ImgListDataGen(keras.utils.Sequence):
     
     # Initialization
     def __init__(self, img_files, labels, batch_size=32, target_size=None, 
-                 n_classes=10, shuffle=True, rescale=1., aug_mode=None):
+                 n_classes=10, class_mode='categorical', shuffle=True, rescale=1., aug_mode=None):
         self.target_size = target_size
         self.batch_size = batch_size
         self.labels = labels
         self.img_files = img_files
         self.n_classes = n_classes
+        if class_mode not in {'categorical', 'binary', 'sparse', 'input', None}:
+            raise ValueError('Invalid class_mode:', class_mode, '; expected one of "categorical", '
+                             '"binary", "sparse", "input" or None.')
+        self.class_mode = class_mode  
         self.shuffle = shuffle
         self.rescale=rescale
         self.augmentation= aug_mode
@@ -49,8 +53,7 @@ class ImgListDataGen(keras.utils.Sequence):
         # Find list of IDs
         list_imgs_temp = [self.img_files[k] for k in indexes]
         # Generate data
-        X, y = self.__data_generation(list_imgs_temp)
-
+        X, y = self.data_generation(list_imgs_temp)
         return X, y
 
     # Updates indexes after each epoch
@@ -60,7 +63,7 @@ class ImgListDataGen(keras.utils.Sequence):
             np.random.shuffle(self.indexes)
 
     # Generates data containing batch_size samples
-    def __data_generation(self, list_imgs_temp):
+    def data_generation(self, list_imgs_temp):
 
         # Initialization
         X = []
@@ -69,7 +72,7 @@ class ImgListDataGen(keras.utils.Sequence):
         # Generate data
         for i, img_file in enumerate(list_imgs_temp):
             # Store sample
-            img = np.array(self.load_img(img_file, target_size=self.target_size))#skimage.io.imread(img_file)
+            img = np.array(self.load_img(img_file, target_size=self.target_size))#skimage.io.imread(img_file
             
             
             if self.augmentation:
@@ -77,19 +80,29 @@ class ImgListDataGen(keras.utils.Sequence):
                 augmented_img=aug.augment_img(img)
                 while(np.array_equal(augmented_img,np.zeros(augmented_img.shape)) == True):  #Avoid black images
                     augmented_img=aug.augment_img(img)
-                img = augmented_img
+                    img = augmented_img
                 
-                
+              
             if self.rescale:
                 img = img.astype(np.float32) * self.rescale
-                
-            
+                 
             X.append(img)
 
-            # Store class
-            y[i] = self.labels[i]
-
-        return np.array(X), keras.utils.to_categorical(y, num_classes=self.n_classes)
+            # Store label
+            if (self.labels is not None):
+                y[i] = self.labels[i]
+        
+        X = np.array(X)
+        if self.class_mode == 'input':
+            y = X.copy()
+        elif self.class_mode == 'sparse':
+            y = np.array(y)
+        elif self.class_mode == 'binary':
+            y = np.array(y).astype(np.float32)
+        elif self.class_mode == 'categorical':
+            y = np.array(keras.utils.to_categorical(y, num_classes=self.n_classes))
+            
+        return X, y
     
     #load_img code extracted from keras_preprocessing/image.py
     def load_img(self, path, grayscale=False, color_mode='rgb', target_size=None, interpolation='nearest'):
