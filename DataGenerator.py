@@ -52,8 +52,10 @@ class ImgListDataGen(keras.utils.Sequence):
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
         # Find list of IDs
         list_imgs_temp = [self.img_files[k] for k in indexes]
+        list_labels_temp = [self.labels[k] for k in indexes]
         # Generate data
-        X, y = self.data_generation(list_imgs_temp)
+        X, y = self.data_generation(list_imgs_temp, list_labels_temp)
+        
         return X, y
 
     # Updates indexes after each epoch
@@ -63,7 +65,7 @@ class ImgListDataGen(keras.utils.Sequence):
             np.random.shuffle(self.indexes)
 
     # Generates data containing batch_size samples
-    def data_generation(self, list_imgs_temp):
+    def data_generation(self, list_imgs_temp, list_labels_temp):
 
         # Initialization
         X = []
@@ -80,7 +82,7 @@ class ImgListDataGen(keras.utils.Sequence):
                 augmented_img=aug.augment_img(img)
                 while(np.array_equal(augmented_img,np.zeros(augmented_img.shape)) == True):  #Avoid black images
                     augmented_img=aug.augment_img(img)
-                    img = augmented_img
+                img = augmented_img
                 
               
             if self.rescale:
@@ -90,7 +92,8 @@ class ImgListDataGen(keras.utils.Sequence):
 
             # Store label
             if (self.labels is not None):
-                y[i] = self.labels[i]
+                y[i] = list_labels_temp[i]
+                
         
         X = np.array(X)
         if self.class_mode == 'input':
@@ -101,7 +104,7 @@ class ImgListDataGen(keras.utils.Sequence):
             y = np.array(y).astype(np.float32)
         elif self.class_mode == 'categorical':
             y = np.array(keras.utils.to_categorical(y, num_classes=self.n_classes))
-            
+        
         return X, y
     
     #load_img code extracted from keras_preprocessing/image.py
@@ -156,3 +159,5 @@ class ImgListDataGen(keras.utils.Sequence):
                 resample = _PIL_INTERPOLATION_METHODS[interpolation]
                 img = img.resize(width_height_tuple, resample)
         return img  
+    
+    
