@@ -5,10 +5,10 @@ import threading
 
 
 class FileDataGen(object):
-     """Generate batches of tensor image data with real-time data augmentation.
-     The data will be looped over (in batches).
+    """Generate batches of tensor image data with real-time data augmentation.
+    The data will be looped over (in batches).
     # Arguments
-        featurewise_center: Boolean.
+    featurewise_center: Boolean.
             Set input mean to 0 over the dataset, feature-wise.
         samplewise_center: Boolean. Set each sample mean to 0.
         featurewise_std_normalization: Boolean.
