@@ -409,6 +409,12 @@ class FileDataGen(object):
 
         return transform_parameters
 
+    def flip_axis(self, x, axis):
+        x = np.asarray(x).swapaxes(axis, 0)
+        x = x[::-1, ...]
+        x = x.swapaxes(0, axis)
+        return x
+    
     def apply_transform(self, x, transform_parameters):
         """Applies a transformation to an image according to given parameters.
         # Arguments
@@ -453,10 +459,10 @@ class FileDataGen(object):
                                     img_channel_axis)
 
         if transform_parameters.get('flip_horizontal', False):
-            x = img_prep.flip_axis(x, img_col_axis)
+            x = self.flip_axis(x, img_col_axis)
 
         if transform_parameters.get('flip_vertical', False):
-            x = img_prep.flip_axis(x, img_row_axis)
+            x = self.flip_axis(x, img_row_axis)
 
         if transform_parameters.get('brightness') is not None:
             x = img_prep.apply_brightness_shift(x, transform_parameters['brightness'])
