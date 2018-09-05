@@ -29,6 +29,8 @@ class K_Fold:
         
         self.hist_dict = dict()
         
+        Wsave = model.get_weights()
+        
         train_datagen = FileDataGen(**train_gen_params) 
         val_datagen = FileDataGen(**test_gen_params) 
         
@@ -38,6 +40,8 @@ class K_Fold:
             y_train_cv = self.labels[train_idx]
             X_valid_cv = self.data[val_idx]
             y_valid_cv= self.labels[val_idx]
+            
+            model.set_weights(Wsave) #re-initialize weights 
             
             train_gen = train_datagen.flow_from_filelist(
                 X_train_cv,
@@ -57,16 +61,16 @@ class K_Fold:
                 validation_steps=len(X_valid_cv)/test_params['batch_size'],
                 validation_data = val_gen)
             
-            if len(hist_dict) == 0:
-                #hist_dict = copy.deepcopy(hist.history) #Save all the data
+            if len(self.hist_dict) == 0:
+                #self.hist_dict = copy.deepcopy(hist.history) #Save all the data
                 for key, val in hist.history.items(): #Just save at the end of the epoch
-                    hist_dict[key]= [val[len(val)-1]]
+                    self.hist_dict[key]= [val[len(val)-1]]
             else:
                 for key, val in hist.history.items(): #Just save at the end of the epoch
-                    hist_dict[key].append(val[len(val)-1])
+                    self.hist_dict[key].append(val[len(val)-1])
                     #for i in val:  #Save all the data
-                        #hist_dict[key].append(i)
-        return hist_dict
+                        #self.hist_dict[key].append(i)
+        return self.hist_dict
     
     def Check_Folds(self):
         print('There are {} Folds'.format(len(self.folds)))
