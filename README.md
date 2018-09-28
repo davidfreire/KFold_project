@@ -8,7 +8,7 @@ Tested on Keras.
 
 
 <br /><br /><br />
-Citation:<br /><br />
+BibTex:<br /><br />
 @misc{Freire18_KFold,<br />
   author = {Freire-Obreg\'on, D.},<br />
   title = {KFolds-CV},<br />
