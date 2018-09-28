@@ -9,7 +9,7 @@ Tested on Keras.
 
 <br /><br /><br />
 Citation:<br /><br />
-@misc{Freire18_aug,<br />
+@misc{Freire18_KFold,<br />
   author = {Freire-Obreg\'on, D.},<br />
   title = {KFolds-CV},<br />
   year = {2018},<br />
